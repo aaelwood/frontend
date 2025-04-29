@@ -1,166 +1,192 @@
-
-<h2>
-  Your estimated salary after graduation is:
-  <span style="color: crimson">
-    
-  </span>
-</h2>
-
-<span style="color: #ff0000">
+{%extends 'base.html'%} {% block page_title %} AI Salary Predictor {% endblock
+  %} {%block content%}
   
-</span>
-
-
-<style>
-  form {
-    display: flex;
-    flex-direction: column;
-    max-width: 500px;
-    margin: auto;
-  }
-  label {
-    margin-top: 20px;
-    font-weight: bold;
-  }
-  select, input[type="submit"] {
-    padding: 10px;
-    margin-top: 5px;
-    font-size: 16px;
-  }
-  input[type="submit"] {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    margin-top: 30px;
-    cursor: pointer;
-    border-radius: 5px;
-  }
-  input[type="submit"]:hover {
-    background-color: #45a049;
-  }
-</style>
-
-<form name="salary_prediction_form" action="/predict" method="POST" id="salaryForm">
-
-  <label for="yearSelect">Current Year in College:</label>
-  <select name="year_in_college" id="yearSelect" required>
-    <option value="">-- Select your current year --</option>
-    <option value="0">Freshman (1st Year)</option>
-    <option value="1">Sophomore (2nd Year)</option>
-    <option value="2">Junior (3rd Year)</option>
-    <option value="3">Senior (4th Year)</option>
-    <option value="4">Graduate Student</option>
-  </select>
-
-  <label for="majorSelect">College Major:</label>
-  <select name="major" id="majorSelect" required disabled>
-    <option value="">-- Select your major --</option>
-    <option value="0">Computer Science</option>
-    <option value="1">Engineering (Mechanical, Electrical, etc.)</option>
-    <option value="2">Business / Economics</option>
-    <option value="3">Biological / Life Sciences</option>
-    <option value="4">Social Sciences / Psychology</option>
-    <option value="5">Mathematics / Statistics</option>
-    <option value="6">Arts / Humanities</option>
-    <option value="7">Other</option>
-  </select>
-
-  <label for="gpaSelect">Current GPA:</label>
-  <select name="gpa" id="gpaSelect" required disabled>
-    <option value="">-- Select your GPA range --</option>
-    <option value="0">Below 2.5</option>
-    <option value="1">2.5 - 3.0</option>
-    <option value="2">3.0 - 3.5</option>
-    <option value="3">3.5 - 4.0</option>
-  </select>
-
-  <label for="internshipSelect">Internship Experience:</label>
-  <select name="internship" id="internshipSelect" required disabled>
-    <option value="">-- Select your experience --</option>
-    <option value="0">No internship experience</option>
-    <option value="1">One internship</option>
-    <option value="2">Multiple internships</option>
-  </select>
-
-  <label for="jobTypeSelect">Preferred Job Type:</label>
-  <select name="job_type" id="jobTypeSelect" required disabled>
-    <option value="">-- Select your career interest --</option>
-    <option value="0">Software Development</option>
-    <option value="1">Data Science / Analytics</option>
-    <option value="2">Engineering (Non-software)</option>
-    <option value="3">Finance / Business</option>
-    <option value="4">Healthcare / Medical</option>
-    <option value="5">Research / Academia</option>
-    <option value="6">Creative / Design</option>
-    <option value="7">Other</option>
-  </select>
-
-  <label for="skillsSelect">Technical Skills:</label>
-  <select name="skills" id="skillsSelect" required disabled>
-    <option value="">-- Select your primary skill --</option>
-    <option value="0">Programming (Python, Java, etc.)</option>
-    <option value="1">Data Analysis / Machine Learning</option>
-    <option value="2">Web Development</option>
-    <option value="3">Hardware / Electrical Engineering</option>
-    <option value="4">Graphic Design / UI/UX</option>
-    <option value="5">Writing / Communication</option>
-    <option value="6">Other</option>
-  </select>
-
-  <label for="campusInvolvementSelect">Campus Involvement:</label>
-  <select name="campus_involvement" id="campusInvolvementSelect" required disabled>
-    <option value="">-- Select your involvement level --</option>
-    <option value="0">No involvement</option>
-    <option value="1">Member of student organizations</option>
-    <option value="2">Leadership position in clubs / organizations</option>
-    <option value="3">Research assistant / Teaching assistant</option>
-  </select>
-
-  <label for="postGradPlansSelect">Plans After Graduation:</label>
-  <select name="post_grad_plans" id="postGradPlansSelect" required disabled>
-    <option value="">-- Select your post-grad plans --</option>
-    <option value="0">Get a full-time job</option>
-    <option value="1">Go to graduate school</option>
-    <option value="2">Start my own business</option>
-    <option value="3">Undecided</option>
-  </select>
-
-  <label for="locationSelect">Preferred Work Location:</label>
-  <select name="location" id="locationSelect" required disabled>
-    <option value="">-- Select your work preference --</option>
-    <option value="0">In my home country</option>
-    <option value="1">Abroad (international work)</option>
-    <option value="2">Remote work / Freelance</option>
-    <option value="3">No preference</option>
-  </select>
-
-  <input type="submit" id="submit" value="Predict My Future Salary" />
-</form>
-
-<script>
-  const formFields = [
-    'yearSelect', 
-    'majorSelect', 
-    'gpaSelect', 
-    'internshipSelect', 
-    'jobTypeSelect', 
-    'skillsSelect', 
-    'campusInvolvementSelect', 
-    'postGradPlansSelect', 
-    'locationSelect'
-  ];
-
-  formFields.forEach((fieldId, index) => {
-    const field = document.getElementById(fieldId);
-    if (index > 0) {
-      field.disabled = true;
-    }
-    field.addEventListener('change', function() {
-      if (field.value !== "" && index + 1 < formFields.length) {
-        document.getElementById(formFields[index + 1]).disabled = false;
-      }
-    });
-  });
-</script>
-
-
+  <h1>Predict your salary using AI</h1>
+  
+  {% if prediction %}
+  <h2>
+    Your predicted salary is:
+    <span class="contact100-form-title" id="output" style="color: crimson">
+      &nbsp;${{ "{:,.2f}".format(prediction.predicted_salary) }}
+    </span>
+  </h2>
+  <p>&nbsp;</p>
+  {% endif %} 
+  
+  
+  
+  {% if error %}
+  <span class="contact100-form-title" id="output" style="color: #ff0000">
+    &nbsp;{{ error }}
+  </span>
+  {% endif %}
+  
+  <form name="salary_prediction_form" action="/predict" method="POST">
+    <label for="ageSelect">Age Range:</label>
+    <select name="age" id="ageSelect" required>
+      <option value="">-- please choose your age --</option>
+      <option value="0">18-21</option>
+      <option value="1">22-24</option>
+      <option value="2">25-29</option>
+      <option value="3">30-34</option>
+      <option value="4">35-39</option>
+      <option value="5">40-44</option>
+      <option value="6">45-49</option>
+      <option value="7">50-54</option>
+      <option value="8">55-59</option>
+      <option value="9">60-69</option>
+      <option value="10">70+</option>
+    </select>
+  
+    <p>&nbsp;</p>
+  
+    <label for="genderSelect">Gender:</label>
+    <select name="gender" id="genderSelect" required>
+      <option value="">-- please choose your Gender --</option>
+      <option value="0">Man</option>
+      <option value="1">Nonbinary</option>
+      <option value="2">Prefer not to say</option>
+      <option value="3">Prefer to self-describe</option>
+      <option value="4">Woman</option>
+    </select>
+  
+    <p>&nbsp;</p>
+  
+    <label for="countrySelect">Country:</label>
+    <select name="country" id="countrySelect" required>
+      <option value="">-- please choose your country --</option>
+      <option value="0">Algeria</option>
+      <option value="1">Argentina</option>
+      <option value="2">Australia</option>
+      <option value="3">Bangladesh</option>
+      <option value="4">Belgium</option>
+      <option value="5">Brazil</option>
+      <option value="6">Cameroon</option>
+      <option value="7">Canada</option>
+      <option value="8">Chile</option>
+      <option value="9">China</option>
+      <option value="10">Colombia</option>
+      <option value="11">Czech Republic</option>
+      <option value="12">Ecuador</option>
+      <option value="13">Egypt</option>
+      <option value="14">Ethiopia</option>
+      <option value="15">France</option>
+      <option value="16">Germany</option>
+      <option value="17">Ghana</option>
+      <option value="18">Hong Kong (S.A.R.)</option>
+      <option value="19">I do not wish to disclose my location</option>
+      <option value="20">India</option>
+      <option value="21">Indonesia</option>
+      <option value="22">Iran, Islamic Republic of...</option>
+      <option value="23">Ireland</option>
+      <option value="24">Israel</option>
+      <option value="25">Italy</option>
+      <option value="26">Japan</option>
+      <option value="27">Kenya</option>
+      <option value="28">Malaysia</option>
+      <option value="29">Mexico</option>
+      <option value="30">Morocco</option>
+      <option value="31">Nepal</option>
+      <option value="32">Netherlands</option>
+      <option value="33">Nigeria</option>
+      <option value="34">Other</option>
+      <option value="35">Pakistan</option>
+      <option value="36">Peru</option>
+      <option value="37">Philippines</option>
+      <option value="38">Poland</option>
+      <option value="39">Portugal</option>
+      <option value="40">Romania</option>
+      <option value="41">Russia</option>
+      <option value="42">Saudi Arabia</option>
+      <option value="43">Singapore</option>
+      <option value="44">South Africa</option>
+      <option value="45">South Korea</option>
+      <option value="46">Spain</option>
+      <option value="47">Sri Lanka</option>
+      <option value="48">Taiwan</option>
+      <option value="49">Thailand</option>
+      <option value="50">Tunisia</option>
+      <option value="51">Turkey</option>
+      <option value="52">Ukraine</option>
+      <option value="53">United Arab Emirates</option>
+      <option value="54">
+        United Kingdom of Great Britain and Northern Ireland
+      </option>
+      <option value="55">United States of America</option>
+      <option value="56">Viet Nam</option>
+      <option value="57">Zimbabwe</option>
+    </select>
+  
+    <p>&nbsp;</p>
+  
+    <label for="educationSelect">Highest Degree:</label>
+    <select name="highest_deg" id="educationSelect" required>
+      <option value="">-- please choose your education --</option>
+      <option value="0">Bachelor’s degree</option>
+      <option value="1">Doctoral degree</option>
+      <option value="2">I prefer not to answer</option>
+      <option value="3">Master’s degree</option>
+      <option value="4">No formal education past high school</option>
+      <option value="5">Professional doctorate</option>
+      <option value="6">
+        Some college/university study without earning a bachelor’s degree
+      </option>
+    </select>
+  
+    <p>&nbsp;</p>
+  
+    <label for="codingExperienceSelect">Coding Experience:</label>
+    <select name="coding_exp" id="codingExperienceSelect" required>
+      <option value="">-- please choose your experience --</option>
+      <option value="0">1-3 years</option>
+      <option value="1">10-20 years</option>
+      <option value="2">20+ years</option>
+      <option value="3">3-5 years</option>
+      <option value="4">5-10 years</option>
+      <option value="5">&lt; 1 year</option>
+      <option value="6">I have never written code</option>
+    </select>
+  
+    <p>&nbsp;</p>
+  
+    <label for="titleSelect">Current Title:</label>
+    <select name="title" id="titleSelect" required>
+      <option value="">-- please choose your current title --</option>
+      <option value="0">Data Administrator</option>
+      <option value="1">
+        Data Analyst (Business, Marketing, Financial, Quantitative, etc)
+      </option>
+      <option value="2">Data Architect</option>
+      <option value="3">Data Engineer</option>
+      <option value="4">Data Scientist</option>
+      <option value="5">Developer Advocate</option>
+      <option value="6">Engineer (non-software)</option>
+      <option value="7">Machine Learning/MLops Engineer</option>
+      <option value="8">
+        Manager (Program, Project, Operations, Executive-level, etc)
+      </option>
+      <option value="9">Other</option>
+      <option value="10">Research Scientist</option>
+      <option value="11">Software Engineer</option>
+      <option value="12">Statistician</option>
+      <option value="13">Teacher / professor</option>
+    </select>
+  
+    <p>&nbsp;</p>
+  
+    <label for="companySizeSelect">Company Size:</label>
+    <select name="company_size" id="companySizeSelect" required>
+      <option value="">-- please choose your company size --</option>
+      <option value="0">0-49 employees</option>
+      <option value="1">10,000 or more employees</option>
+      <option value="2">1000-9,999 employees</option>
+      <option value="3">250-999 employees</option>
+      <option value="4">50-249 employees</option>
+    </select>
+  
+    <p>&nbsp;</p>
+  
+    <input type="submit" id="submit" value="Predict my Salary" />
+  </form>
+  
+  {% endblock %}
